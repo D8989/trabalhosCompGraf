@@ -18,6 +18,7 @@ bool figure_2_on = false;
 bool figure_3_on = false;
 bool figure_4_on = false;
 
+void initGL(void);
 void display(void);
 void keyboardPress(unsigned char key, int x, int y);
 
@@ -28,10 +29,10 @@ int main(int argc, char* argv[])
     glutInitWindowSize(width, heigth);
     glutInitWindowPosition(100,100);
     glutCreateWindow("Exercício 001");
-    glClearColor(1., 1., 1., 0.);
+
+    initGL();
 
     glutKeyboardFunc(keyboardPress);
-
     glutDisplayFunc(display);
 
     // printf("Janela criada.\n");
@@ -49,6 +50,16 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+void initGL(void)
+{
+    glClearColor(1., 1., 1., 0.); // limpa a tela com uma cor
+    glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+    glOrtho(-2.0, 2.0, -2.0, 2.0, -100.0, 100.0); // define o tamanho do dominio de cena
+    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
 void display(void)
 {
     // limpa todos os pixels
@@ -57,41 +68,41 @@ void display(void)
     // desenha o plano cartesiano
     glBegin(GL_LINES);
         glColor3f (0.0, 1.0, 0.0);
-        glVertex2f (-1.0,0.0);
-        glVertex2f(1.0,0.0);
-        glVertex2f(0.0, 1.0);
-        glVertex2f(0.0, -1.0);
+        glVertex2f (-2.0,0.0);
+        glVertex2f(2.0,0.0);
+        glVertex2f(0.0, 2.0);
+        glVertex2f(0.0, -2.0);
     glEnd();
 
     if( figure_1_on ){
         glBegin(GL_TRIANGLES);
             glColor3f(1.0, 0.0, 0.0);
             glVertex2f(0.0, 0.0);
-            glVertex2f(0.9, 0.0);
-            glVertex2f(0.5, 0.9);
+            glVertex2f(1.0, 0.0);
+            glVertex2f(0.5, 1.0);
         glEnd();
     } else 
     if( figure_2_on ){
         glBegin(GL_LINE_LOOP);
             glColor3f(1.0, 0.0, 0.0);
             glVertex2f(0.0, 0.0);
-            glVertex2f(0.9, 0.0);
-            glVertex2f(0.5, 0.9);
+            glVertex2f(1.0, 0.0);
+            glVertex2f(0.5, 1.0);
         glEnd();
     } else
     if ( figure_3_on ){
         glBegin(GL_LINE_LOOP);
             glColor3f(1.0, 0.0, 0.0);
             glVertex2f(0.0, 0.0);
-            glVertex2f(0.9, 0.0);
-            glVertex2f(0.5, 0.9);
+            glVertex2f(1.0, 0.0);
+            glVertex2f(0.5, 1.0);
         glEnd();
 
         glBegin(GL_TRIANGLES);
             glColor3f(1.0, 0.0, 0.0);
             glVertex2f(0.0, 0.0);
-            glVertex2f(-0.9, 0.0);
-            glVertex2f(-0.5, -0.9);
+            glVertex2f(-1.0, 0.0);
+            glVertex2f(-0.5, -1.0);
         glEnd();
 
     } else
@@ -99,12 +110,12 @@ void display(void)
     {
         glBegin(GL_LINE_STRIP);
             glColor3f(0.0, 0.0, 0.0);
-            glVertex2f(-0.4, 0.8);
-            glVertex2f(-0.8, 0.0);
-            glVertex2f(-0.4, -0.8);
-            glVertex2f(0.4, -0.8);
-            glVertex2f(0.8, 0.0);
-            glVertex2f(0.4, 0.8);
+            glVertex2f(-0.5, 1.0);
+            glVertex2f(-1.0, 0.0);
+            glVertex2f(-0.5, -1.0);
+            glVertex2f(0.5, -1.0);
+            glVertex2f(1.0, 0.0);
+            glVertex2f(0.5, 1.0);
         glEnd();
     }
 
