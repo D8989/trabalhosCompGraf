@@ -3,8 +3,8 @@
 
 const int window_with = 400;
 const int window_height = 400;
-const double max_x = 11;
-const double max_y = 11;
+const double max_x = 10;
+const double max_y = 10;
 
 void desenharTriangulo1();
 void desenharTriangulo2();
@@ -45,7 +45,7 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_VIEWPORT);
-    glViewport(0, 200, 200, 200); // esquerdo 
+    glViewport(0, 200, 200, 200); // superior esquerdo 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-max_x, max_x, -max_y, max_y, -1, 1);
@@ -58,28 +58,28 @@ void display(void)
 
 
     glMatrixMode(GL_VIEWPORT);
+    glLoadIdentity();
     glViewport(200, 200, 200, 200); // superior direito
     glMatrixMode(GL_PROJECTION);
 
     glLoadIdentity();
-    glOrtho(-1, 11, -1, 11, -1, 1);
-    //glOrtho(-max_x, max_x, -max_y, max_y, -1, 1);
+    glOrtho(-1, max_x, -1, max_y, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-/*
+
     desenharEixos();
     desenharLinhas();
     desenharTriangulo1();
     desenharTriangulo2();
-*/
+
     glMatrixMode(GL_VIEWPORT);
     glViewport(0, 0, 200, 200); // inferior esquerdo
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-11, 1, -11, 1, -1, 1);
-    //glOrtho(-max_x, max_x, -max_y, max_y, -1, 1);
+    glOrtho(-max_x, 1, -max_y, 1, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    
     desenharEixos();
     desenharLinhas();
     desenharTriangulo1();
@@ -89,10 +89,10 @@ void display(void)
     glViewport(200, 0, 200, 200); // inferior direito
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-1, 11, -11, 1, -1, 1);
-    //glOrtho(-max_x, max_x, -max_y, max_y, -1, 1);
+    glOrtho(-1, max_x, -max_y, 1, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    
     desenharEixos();
     desenharLinhas();
     desenharTriangulo1();
