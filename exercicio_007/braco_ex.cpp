@@ -26,6 +26,8 @@ COR selected;
 
 float angleArmYellow = 0.0f, angleArmBlue = 0.0f, angleArmGreen = 0.0f;
 
+const float minAngleClaw = 40.0f, maxAngleClaw = 89.0f;
+float angleClaw = minAngleClaw;
 
 void init(void);
 void desenhaEixos();
@@ -36,6 +38,12 @@ void specialKeys(int key, int x, int y);
 
 void posicionarCamera();
 void drawOneArm(glm::vec3 cor, float angle);
+void drawClaw(glm::vec3 cor, float angle);
+void drawPartClaw(glm::vec3 cor, float angle); // função auxiliar para desenhar a garra 
+void moveClockwise();
+void moveAntiClockwise();
+void openClaw();
+void closeClaw();
 
 int main(int argc, char *argv[])
 {
@@ -106,12 +114,14 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     desenhaEixos();
 
-    glPushMatrix(); 
+    glPushMatrix();
         drawOneArm(yellow, angleArmYellow);
         glTranslatef (1.0, 0.0, 0.0); // origem posicionada
         drawOneArm(green, angleArmGreen);
         glTranslatef (1.0, 0.0, 0.0); // origem posicionada
         drawOneArm(blue, angleArmBlue);
+        glTranslatef (1.0, 0.0, 0.0); // origem posicionada
+        drawClaw(red, angleClaw);
     glPopMatrix(); 
     glutSwapBuffers();
 }
@@ -132,13 +142,88 @@ void reshape (int w, int h)
 
 void drawOneArm(glm::vec3 cor, float angle)
 {
+    glColor3f(cor.x, cor.y, cor.z);
     glRotatef (angle, 0.0f, 0.0f, 1.0f);
     glTranslatef(1.0f, 0.0f, 0.0f);
     glPushMatrix();
-        glColor3f(cor.x, cor.y, cor.z);
         glScalef(2.0f, 0.5f, 0.5f);
         glutSolidCube(1.0);
     glPopMatrix();
+}
+
+void drawClaw(glm::vec3 cor, float angle)
+{
+    glPushMatrix();
+        drawPartClaw(cor, angle);
+        glScalef(1.0f, -1.0f, 1.0f);
+        drawPartClaw(cor, angle);
+    glPopMatrix();
+}
+
+void drawPartClaw(glm::vec3 cor, float angle)
+{
+    glDisable(GL_LIGHTING);
+    glPushMatrix();
+        // metade de tras da garra
+        glColor3f(cor.x, cor.y, cor.z);
+        glRotatef(angle, 0.0f, 0.0f, 1.0f);
+        glTranslatef(0.5f, 0.0f, 0.0f);
+        glPushMatrix();
+            glScalef(1.0f, 0.25f, 0.25f);
+            glutSolidCube(1.0f);
+        glPopMatrix();
+
+        // metade da frente da garra
+        glColor3f(cor.x * 0.5f, cor.y * 0.5f, cor.z * 0.5f);
+        glTranslatef(0.5f, 0.0f, 0.0f);
+        glRotatef(-minAngleClaw*2.0f, 0.0f, 0.0f, 1.0f); // angulo fixo
+        glTranslatef(0.5f, 0.0f, 0.0f);
+        glScalef(1.0f, 0.25f, 0.25f);
+        glutSolidCube(1.0f);
+    glPopMatrix();
+    glEnable(GL_LIGHTING);
+}
+
+void moveClockwise()
+{
+    if(selected == COR::YELLOW){
+        angleArmYellow = ((int) angleArmYellow - 5) % 360;
+    } 
+    if(selected == COR::BLUE){
+        angleArmBlue = ((int) angleArmBlue - 5) % 360;
+    }
+    if(selected == COR::GREEN){
+        angleArmGreen = ((int) angleArmGreen - 5) % 360;
+    }
+}
+
+void moveAntiClockwise()
+{
+    if(selected == COR::YELLOW){
+        angleArmYellow = ((int) angleArmYellow + 5) % 360;
+    } 
+    if(selected == COR::BLUE){
+        angleArmBlue = ((int) angleArmBlue + 5) % 360;
+    }
+    if(selected == COR::GREEN){
+        angleArmGreen = ((int) angleArmGreen + 5) % 360;
+    }
+}
+
+void openClaw()
+{
+    angleClaw = ((int) angleClaw + 5) % 360;
+    if( angleClaw > maxAngleClaw) {
+        angleClaw = maxAngleClaw;
+    }
+}
+
+void closeClaw()
+{
+    angleClaw = ((int) angleClaw - 5) % 360;
+    if( angleClaw < minAngleClaw) {
+        angleClaw = minAngleClaw;
+    }
 }
 
 void keyboard (unsigned char key, int x, int y)
@@ -166,28 +251,18 @@ void specialKeys(int key, int x, int y)
 {
    switch(key)
    {
-      case GLUT_KEY_LEFT:
-			if(selected == COR::YELLOW){
-                angleArmYellow = ((int) angleArmYellow + 5) % 360;
-            } 
-			if(selected == COR::BLUE){
-                angleArmBlue = ((int) angleArmBlue + 5) % 360;
-            }
-            if(selected == COR::GREEN){
-                angleArmGreen = ((int) angleArmGreen + 5) % 360;
-            }
-      break;
-      case GLUT_KEY_RIGHT:
-			if(selected == COR::YELLOW){
-                angleArmYellow = ((int) angleArmYellow - 5) % 360;
-            } 
-			if(selected == COR::BLUE){
-                angleArmBlue = ((int) angleArmBlue - 5) % 360;
-            }
-            if(selected == COR::GREEN){
-                angleArmGreen = ((int) angleArmGreen - 5) % 360;
-            }
-      break;
+    case GLUT_KEY_LEFT:
+		moveAntiClockwise();
+        break;
+    case GLUT_KEY_RIGHT:
+        moveClockwise();
+        break;
+    case GLUT_KEY_UP:
+        openClaw();
+        break;
+    case GLUT_KEY_DOWN:
+        closeClaw();
+        break;
    }
    glutPostRedisplay();
 }
