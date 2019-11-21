@@ -8,10 +8,11 @@ using namespace std;
 
 #define ALTURA 600 
 #define LARGURA 600
-#define ALTURA_MAX 100
 #define LIN 20 // Numero de linhas e colunas da malha
 #define COL 20
 #define ESP 10 // espacamento entre vertices da malha
+#define ALTURA_MAX 150
+#define QTD_NIVEIS 5
 
 // Para compilar: g++ terreno.cpp -o terreno -lGL -lglut -lGLU -lm -lSOIL
 // ./terreno
@@ -52,19 +53,50 @@ void cameraToLeft(float posX, float posY ) {
 	//posYCamera += sin(posY);
 }
 
+void drawLineHorizontal(int inicio, int fim, int pos, int posZ) {
+	for( int i = inicio; i <= fim; ++i) {
+		altura[pos][i] = posZ;
+	}
+}
+
+void drawLineVertical(int inicio, int fim, int pos, int posZ) {
+	for( int i = inicio; i <= fim; ++i) {
+		altura[i][pos] = posZ;
+	}
+}
+
+void drawNivel(int xBegin, int yBegin, int xEnd, int yEnd, int posZ) {
+	drawLineHorizontal(yBegin, yEnd, xBegin, posZ);
+	drawLineHorizontal(yBegin, yEnd, xBegin, posZ);
+
+	drawLineVertical(xBegin, xEnd, yBegin, posZ);
+	drawLineVertical(xBegin, xEnd, yEnd, posZ);
+}
+
 // Gerando pontos em Z
 void pontosZ(void)
 {
-	for (int y = 3; y < LIN-4; y++)
+	int jump = LIN/QTD_NIVEIS;
+	int meio = COL/2; // LIN == COL
+	//altura[meio][meio] = ALTURA_MAX; // ponto mais alto da montanha
+/*	
+	for( int nivel = 0; nivel < totalNiveis; nivel += 1){
+
+	}
+*/
+
+	for (int y = 1; y < LIN-1; y++)
 	{
-		for (int x = 3; x < COL-4; x++)
+		for (int x = 1; x < COL-2; x++)
 		{	
 			//altura[x][y] = rand() % 10 + (-10); 
 			//altura[x][y] = 50 * perlin2d(x, y,0.3,4);
-			altura[x][y] = rand() % (ALTURA_MAX + 1 - 50) + 50;
-			
+			altura[x][y] = rand() % (ALTURA_MAX + 1 - 10) + 10;
+			//int posZ = rand() % (ALTURA_MAX + 1 - 50) + 50;
+			//drawNivel(x, y, x+jump, y+jump,posZ);
 		}
 	}
+
 }
 
 void desenhaPontos(void)
