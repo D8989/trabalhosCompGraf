@@ -12,7 +12,6 @@ using namespace std;
 #define COL 20
 #define ESP 10 // espacamento entre vertices da malha
 #define ALTURA_MAX 150
-#define QTD_NIVEIS 5
 
 // Para compilar: g++ terreno.cpp -o terreno -lGL -lglut -lGLU -lm -lSOIL
 // ./terreno
@@ -24,6 +23,21 @@ float posYCamera = -180.0f;
 int altura[LIN][COL]; // pontos de altura Z para o terreno
 GLuint imgTextura;
 GLfloat angulo,fAspect;
+
+// apenas para debug
+void printAturas() {
+	for(int i =0; i < COL; i++) {
+		for(int j = 0; j < LIN; ++j) {
+			cout << altura[i][j] << ' ';
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+
+int numberRandom(int min, int max) {
+	return  rand() % (max + 1 - min) + min;
+}
 
 void observador(void)
 {
@@ -65,38 +79,43 @@ void drawLineVertical(int inicio, int fim, int pos, int posZ) {
 	}
 }
 
-void drawNivel(int xBegin, int yBegin, int xEnd, int yEnd, int posZ) {
-	drawLineHorizontal(yBegin, yEnd, xBegin, posZ);
-	drawLineHorizontal(yBegin, yEnd, xBegin, posZ);
+void drawNivel(const int x, const int y, const int limitX, const int limitY, const int valMin, const int valMax) {
+	// draw superior line
+	for(int i = y; i < limitY; ++i) {
+		altura[x][i] = numberRandom(valMin, valMax);
+	}
 
-	drawLineVertical(xBegin, xEnd, yBegin, posZ);
-	drawLineVertical(xBegin, xEnd, yEnd, posZ);
+	// draw right column
+	for(int i = x; i < limitX; ++i) {
+		altura[i][limitY-1] = numberRandom(valMin, valMax);
+	}
+	
+	// draw down line
+	for(int i = y; i < limitY; ++i) {
+		altura[limitX-1][i] = numberRandom(valMin, valMax);
+	}
+
+	// draw left column
+	for(int i = x; i < limitX; ++i) {
+		altura[i][y] = numberRandom(valMin, valMax);
+	}
 }
 
 // Gerando pontos em Z
 void pontosZ(void)
 {
-	int jump = LIN/QTD_NIVEIS;
+	//int jump = LIN/QTD_NIVEIS;
 	int meio = COL/2; // LIN == COL
+	int next_jump = ALTURA_MAX / meio;
+	int altura_min = 0;
+	int altura_max = next_jump;
 	//altura[meio][meio] = ALTURA_MAX; // ponto mais alto da montanha
-/*	
-	for( int nivel = 0; nivel < totalNiveis; nivel += 1){
-
+	
+	for( int i = 0, limite = COL-1; i < meio; i++, limite--){
+		drawNivel(i, i, limite, limite, altura_min, altura_max);
+		altura_min += next_jump;
+		altura_max += next_jump;
 	}
-*/
-
-	for (int y = 1; y < LIN-1; y++)
-	{
-		for (int x = 1; x < COL-2; x++)
-		{	
-			//altura[x][y] = rand() % 10 + (-10); 
-			//altura[x][y] = 50 * perlin2d(x, y,0.3,4);
-			altura[x][y] = rand() % (ALTURA_MAX + 1 - 10) + 10;
-			//int posZ = rand() % (ALTURA_MAX + 1 - 50) + 50;
-			//drawNivel(x, y, x+jump, y+jump,posZ);
-		}
-	}
-
 }
 
 void desenhaPontos(void)
@@ -204,6 +223,9 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(LARGURA,ALTURA);
 	glutCreateWindow("Geracao de terrano");
+
+	srand(time(NULL));
+
 	inicializa();
 	// observador();
 	pontosZ();
