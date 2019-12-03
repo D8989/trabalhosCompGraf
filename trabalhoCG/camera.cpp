@@ -1,4 +1,4 @@
-#include "camera.hpp"
+#include "header/camera.hpp"
 #include "glm/glm.hpp"
 
 glm::mat4 Camera::GetViewMatrix()

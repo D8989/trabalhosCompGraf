@@ -1,8 +1,8 @@
 # variaveis
 CC=g++
 LIBS= -lGL -lglut -lGLU -lm -lSOIL
-EXEC=exec_ex
-CPP=terreno.cpp camera.cpp
+EXEC=exec
+CPP=main.cpp camera.cpp geradorMontanha.cpp
 
 
 
